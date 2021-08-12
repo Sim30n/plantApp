@@ -27,20 +27,45 @@ void setup() {
   digitalWrite(RELAY2, HIGH); // Switch off the water pump
 }
 void loop() {
-      
 
+    int light_value;
     int distance;
+    float humidity;
+    float temperature;
+    int water_level;
+    int soil_moisture;
+    String val;
 
-    distance = ultrasonic_distance();
+    // reply only when you receive data:
+    if (Serial.available() > 0) {
+        val = Serial.readStringUntil('\n');
+        if(val == "read_sensors"){
+            distance = ultrasonic_distance();
+            humidity = dht.readHumidity();
+            temperature = dht.readTemperature();
+            light_value = analogRead(A0);
+            water_level = digitalRead(WLEVEL);
+            soil_moisture = read_soil();
 
-    //Serial.println(distance);
-    read_temp_hum();
+            Serial.print(20);
+            Serial.print(";");
+            Serial.print(humidity);
+            Serial.print(";");
+            Serial.print(temperature);
+            Serial.print(";");
+            Serial.print(light_value);
+            Serial.print(";");
+            Serial.print(water_level);
+            Serial.print(";");
+            Serial.print(soil_moisture);
+            Serial.println();
+        }
+    }
+
     //control_relay(2, 0);
     //delay(5000);
     //control_relay(2, 1);
-    read_light();
-    read_wlevel();
-    read_soil();
+
     
 }
 
@@ -62,27 +87,6 @@ int ultrasonic_distance(){
     return distance;
 }
 
-
-void read_temp_hum(){
-    float h = dht.readHumidity();
-    float t = dht.readTemperature();
-    // check if returns are valid, if they are NaN (not a number) then something went wrong!
-    if (isnan(t) || isnan(h)) 
-    {
-        Serial.println("Failed to read from DHT");
-    } 
-    else 
-    {
-        Serial.print("Humidity: "); 
-        Serial.print(h);
-        Serial.print(" %\t");
-        Serial.print("Temperature: "); 
-        Serial.print(t);
-        Serial.println(" *C");
-        delay(2000);
-    }
-}
-
 void control_relay(int relay, int position){
     if(relay == 2 && position == 0){
         // inverted because of relay position
@@ -95,21 +99,10 @@ void control_relay(int relay, int position){
     }
 }
 
-void read_light(){
-    int light_value = analogRead(A0);
-    Serial.println(light_value);
-}
-
-void read_wlevel(){
-    int val = digitalRead(WLEVEL);
-    Serial.println(val);
-}
-
-void read_soil(){
+int read_soil(){
     digitalWrite(SOIL, HIGH);
-    delay(3000);
+    delay(1000);
     int soilSensorValue = analogRead(A1);
-    Serial.println(soilSensorValue);
-    //delay(2500);
     digitalWrite(SOIL, LOW);
+    return soilSensorValue;
 }
