@@ -2,34 +2,59 @@
 
 import serial
 import time
+from datetime import datetime
 
 class ArduinoBoard:
     ser = serial.Serial("/dev/ttyACM0", 9600)
     time.sleep(2)
 
     def __init__(self):
-        self.humidity = 0
-        self.temperature = 0
-        self.water_level = 0
-        self.soil_moisture = 0
-        self.water_tank_level = 0
+        self.time_stamp = None
+        self.distance = None
+        self.humidity = None
+        self.temperature = None
+        self.light_value = None
+        self.water_level = None
+        self.soil_moisture = None
 
     def read_sensors(self):
         self.ser.write(str.encode("read_sensors"))
         time.sleep(3)
         result = self.ser.readline().decode("utf-8")
-        print(result)
-        #ser.close()
+        strip_result = result.strip()
+        split_result = strip_result.split(";")
+        self.distance = split_result[0]
+        self.humidity = split_result[1]
+        self.temperature = split_result[2]
+        self.light_value = split_result[3]
+        self.distance = split_result[4]
+        self.distance = split_result[5]
+        self.time_stamp = datetime.now()
         
-    def run_water_pump(self, pump, position):
-        pass
+    def run_water_pump(self, run_time):
+        run_command = "run_water_pump" + str(run_time)
+        self.ser.write(str.encode(run_command))
     
     def switch_light(self, position):
         pass
     
     def save_sensor_values(self):
         pass
-    
+
+    def close_serial(self):
+        self.ser.close()
+
 arduino = ArduinoBoard()
 
-arduino.read_sensors()
+while True:
+    val = input("komento:")
+    if val == "1":
+        arduino.run_water_pump(15)
+    elif val == "2":
+        arduino.read_sensors()
+        print(arduino.time_stamp)
+    elif val == "3":
+        arduino.close_serial()
+        break
+    #arduino.read_sensors()
+    #arduino.close_serial()

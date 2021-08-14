@@ -7,9 +7,32 @@
 #define DHTPIN 4    // modify to the pin we connected
 #define DHTTYPE DHT21   // AM2301 
 #define RELAY1 5
-#define RELAY2 6
+#define RELAY2 6 // water pump
 #define SOIL 8
 #define WLEVEL 10
+
+/* integers */
+int light_value;
+int distance;
+int soilSensorValue;
+int water_level;
+int soil_moisture;
+
+/* floats */
+float humidity;
+float temperature;
+
+/* long integers */
+long run_time_int;
+long interval;
+unsigned long startMillis;   
+unsigned long currentMillis;     
+long stopMills;
+long duration;
+
+/* strings */
+String val;
+String run_time;
 
 
 DHT dht(DHTPIN, DHTTYPE);
@@ -28,18 +51,13 @@ void setup() {
 }
 void loop() {
 
-    int light_value;
-    int distance;
-    float humidity;
-    float temperature;
-    int water_level;
-    int soil_moisture;
-    String val;
-
     // reply only when you receive data:
     if (Serial.available() > 0) {
+        
         val = Serial.readStringUntil('\n');
-        if(val == "read_sensors"){
+        if(val == "read_sensors")
+        /* logic for sending sensor values to serial */
+        {
             distance = ultrasonic_distance();
             humidity = dht.readHumidity();
             temperature = dht.readTemperature();
@@ -60,19 +78,36 @@ void loop() {
             Serial.print(soil_moisture);
             Serial.println();
         }
+
+        else if (val.substring(0,14) == "run_water_pump")
+        /* 
+        Logic for running the water pump. The water pump will stop
+        after given seconds or when the water level reaches to the high level sensor.  
+        */
+        {
+            run_time = val.substring(14,17);
+            run_time_int = run_time.toInt();
+            startMillis = millis();        
+            interval = run_time_int * 1000; 
+            stopMills = interval + startMillis;
+            digitalWrite(RELAY2, LOW); // water pump on
+            
+            while(true){
+                currentMillis = millis();
+                water_level = digitalRead(WLEVEL); // high level sensor
+                if (currentMillis >= stopMills || water_level == 1) {
+                    digitalWrite(RELAY2, HIGH); //water pump off
+                    break;
+                }
+            }
+        }
     }
-
-    //control_relay(2, 0);
-    //delay(5000);
-    //control_relay(2, 1);
-
-    
 }
 
 int ultrasonic_distance(){
     // defines variables
-    long duration; // variable for the duration of sound wave travel
-    int distance; // variable for the distance measurement
+    duration; // variable for the duration of sound wave travel
+    distance; // variable for the distance measurement
     // Clears the trigPin condition
     digitalWrite(trigPin, LOW);
     delayMicroseconds(2);
@@ -87,22 +122,10 @@ int ultrasonic_distance(){
     return distance;
 }
 
-void control_relay(int relay, int position){
-    if(relay == 2 && position == 0){
-        // inverted because of relay position
-        digitalWrite(RELAY2, HIGH);
-    }
-    else if (relay == 2 && position == 1)
-    {
-        // inverted because of relay position
-        digitalWrite(RELAY2, LOW);
-    }
-}
-
 int read_soil(){
     digitalWrite(SOIL, HIGH);
     delay(1000);
-    int soilSensorValue = analogRead(A1);
+    soilSensorValue = analogRead(A1);
     digitalWrite(SOIL, LOW);
     return soilSensorValue;
 }
