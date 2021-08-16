@@ -27,8 +27,8 @@ class ArduinoBoard:
         self.humidity = split_result[1]
         self.temperature = split_result[2]
         self.light_value = split_result[3]
-        self.distance = split_result[4]
-        self.distance = split_result[5]
+        self.water_level = split_result[4]
+        self.soil_moisture = split_result[5]
         self.time_stamp = datetime.now()
         
     def run_water_pump(self, run_time):
@@ -44,6 +44,8 @@ class ArduinoBoard:
     def close_serial(self):
         self.ser.close()
 
+
+"""
 arduino = ArduinoBoard()
 
 while True:
@@ -58,3 +60,4 @@ while True:
         break
     #arduino.read_sensors()
     #arduino.close_serial()
+"""
