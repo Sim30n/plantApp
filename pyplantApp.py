@@ -16,6 +16,7 @@ class ArduinoBoard:
         self.light_value = None
         self.water_level = None
         self.soil_moisture = None
+        self.run_water_pump_time = 0 # set time from thingsboard
 
     def read_sensors(self):
         self.ser.write(str.encode("read_sensors"))
@@ -30,9 +31,11 @@ class ArduinoBoard:
         self.water_level = split_result[4]
         self.soil_moisture = split_result[5]
         self.time_stamp = datetime.now()
+        time.sleep(1)
         
-    def run_water_pump(self, run_time):
-        run_command = "run_water_pump" + str(run_time)
+    def run_water_pump(self):
+        run_command = "run_water_pump" + str(self.run_water_pump_time)
+        print(run_command)
         self.ser.write(str.encode(run_command))
     
     def switch_light(self, position):

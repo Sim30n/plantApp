@@ -10,7 +10,7 @@ load_dotenv()
 
 THINGSBOARD_HOST = os.environ['THINGSBOARD_HOST']
 ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
-INTERVAL=60
+INTERVAL=2
 
 sensor_data = {
     'temperature': 0, 
@@ -46,11 +46,16 @@ def on_message(client, userdata, msg):
     # Check request method
     print(data)
     if data["method"] == "run_water_pump":
-        arduino.run_water_pump(data["params"]["time"])
+        arduino.run_water_pump()
+        time.sleep(arduino.run_water_pump_time) # wait for the pump to stop running
+    elif data['method'] == 'getPumpRuntime':
+        # Reply getPumpRuntime 
+        client.publish(msg.topic.replace('request', 'response'), arduino.run_water_pump_time, 1)
+    elif data['method'] == 'setPumpRuntime':
+        # set pump run time
+        arduino.run_water_pump_time = data["params"]
+    
     """
-    if data['method'] == 'getGpioStatus':
-        # Reply with GPIO status
-        client.publish(msg.topic.replace('request', 'response'), get_gpio_status(), 1)
     elif data['method'] == 'setGpioStatus':
         # Update GPIO status and reply
         set_gpio_status(data['params']['pin'], data['params']['enabled'])
@@ -77,41 +82,47 @@ for pin in gpio_state:
     # Set output mode for all GPIO pins
     GPIO.setup(pin, GPIO.OUT)
 """
-client = mqtt.Client()
-# Register connect callback
-client.on_connect = on_connect
-# Registed publish message callback
-client.on_message = on_message
-# Set access token
-client.username_pw_set(ACCESS_TOKEN)
-# Connect to ThingsBoard using default MQTT port and 60 seconds keepalive interval
-client.connect(THINGSBOARD_HOST, 1883, 60)
 
-next_reading = time.time() 
 
-try:
-    client.loop_start()
-    while True:
-        arduino.read_sensors()
+def main():
+    client = mqtt.Client()
+    # Register connect callback
+    client.on_connect = on_connect
+    # Registed publish message callback
+    client.on_message = on_message
+    # Set access token
+    client.username_pw_set(ACCESS_TOKEN)
+    # Connect to ThingsBoard using default MQTT port and 60 seconds keepalive interval
+    client.connect(THINGSBOARD_HOST, 1883, 60)
 
-        #print(u"Temperature: {}, Humidity: {}%".format(temperature, humidity))
-        sensor_data['temperature'] = arduino.temperature
-        sensor_data['humidity'] = arduino.humidity
-        sensor_data['distance'] = arduino.distance
-        sensor_data['light_value'] = arduino.light_value
-        sensor_data['water_level'] = arduino.water_level
-        sensor_data['soil_moisture'] = arduino.soil_moisture
-        print(arduino.soil_moisture)
+    next_reading = time.time() 
 
-        # Sending humidity and temperature data to ThingsBoard
-        client.publish('v1/devices/me/telemetry', json.dumps(sensor_data), 1)
+    try:
+        client.loop_start()
+        while True:
+            arduino.read_sensors()
+            
+            
+            sensor_data['temperature'] = arduino.temperature
+            sensor_data['humidity'] = arduino.humidity
+            sensor_data['distance'] = arduino.distance
+            sensor_data['light_value'] = arduino.light_value
+            sensor_data['water_level'] = arduino.water_level
+            sensor_data['soil_moisture'] = arduino.soil_moisture
+            print("Temperature: {}, Humidity: {}%".format(sensor_data["temperature"], sensor_data["humidity"]))
 
-        next_reading += INTERVAL
-        sleep_time = next_reading-time.time()
-        if sleep_time > 0:
-            time.sleep(sleep_time)
-except KeyboardInterrupt:
-    pass
+            # Sending humidity and temperature data to ThingsBoard
+            client.publish('v1/devices/me/telemetry', json.dumps(sensor_data), 1)
 
-client.loop_stop()
-client.disconnect()
+            next_reading += INTERVAL
+            sleep_time = next_reading-time.time()
+            if sleep_time > 0:
+                time.sleep(sleep_time)
+    except KeyboardInterrupt:
+        pass
+
+    client.loop_stop()
+    client.disconnect()
+
+if __name__ == "__main__":
+    main()
