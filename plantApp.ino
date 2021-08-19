@@ -124,7 +124,7 @@ int ultrasonic_distance(){
 
 int read_soil(){
     digitalWrite(SOIL, HIGH);
-    delay(1000);
+    delay(3000);
     soilSensorValue = analogRead(A1);
     digitalWrite(SOIL, LOW);
     return soilSensorValue;

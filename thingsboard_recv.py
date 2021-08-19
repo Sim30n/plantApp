@@ -46,14 +46,19 @@ def on_message(client, userdata, msg):
     # Check request method
     print(data)
     if data["method"] == "run_water_pump":
+        time.sleep(1)
         arduino.run_water_pump()
-        time.sleep(arduino.run_water_pump_time) # wait for the pump to stop running
+        time.sleep(arduino.run_water_pump_time+1) # wait for the pump to stop running
     elif data['method'] == 'getPumpRuntime':
         # Reply getPumpRuntime 
         client.publish(msg.topic.replace('request', 'response'), arduino.run_water_pump_time, 1)
     elif data['method'] == 'setPumpRuntime':
         # set pump run time
         arduino.run_water_pump_time = data["params"]
+    elif data['method'] == 'setAutoWatering':
+        arduino.automate_watering = data["params"]
+    elif data['method'] == 'getAutoWatering':    
+        client.publish(msg.topic.replace('request', 'response'), int(arduino.automate_watering), 1)
     
     """
     elif data['method'] == 'setGpioStatus':
@@ -100,24 +105,25 @@ def main():
     try:
         client.loop_start()
         while True:
-            arduino.read_sensors()
-            
-            
+            arduino.read_sensors()           
+
             sensor_data['temperature'] = arduino.temperature
             sensor_data['humidity'] = arduino.humidity
             sensor_data['distance'] = arduino.distance
             sensor_data['light_value'] = arduino.light_value
             sensor_data['water_level'] = arduino.water_level
             sensor_data['soil_moisture'] = arduino.soil_moisture
+            print(arduino.soil_moisture)
             print("Temperature: {}, Humidity: {}%".format(sensor_data["temperature"], sensor_data["humidity"]))
-
             # Sending humidity and temperature data to ThingsBoard
             client.publish('v1/devices/me/telemetry', json.dumps(sensor_data), 1)
-
             next_reading += INTERVAL
             sleep_time = next_reading-time.time()
             if sleep_time > 0:
                 time.sleep(sleep_time)
+
+            if(arduino.automate_watering == True):
+                arduino.auto_watering() 
     except KeyboardInterrupt:
         pass
 
