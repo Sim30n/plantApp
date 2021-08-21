@@ -19,7 +19,7 @@ class ArduinoBoard:
         self.run_water_pump_time = 0 # set time from thingsboard
         self.automate_watering = False
         self.min_soil_moisture = 1000
-        self.last_pump_run = None
+        self.last_pump_run = datetime.now()
 
     def read_sensors(self):
         self.ser.write(str.encode("read_sensors"))
@@ -42,7 +42,9 @@ class ArduinoBoard:
             print(run_command)
             self.ser.write(str.encode(run_command))
             self.last_pump_run = datetime.now()
-    
+            #time.sleep(self.run_water_pump_time+1)
+            
+    """
     def auto_watering(self):
         time_now = datetime.now()
         time_difference = time_now - self.last_pump_run
@@ -50,7 +52,7 @@ class ArduinoBoard:
         print(time_difference.total_seconds())
         if(self.soil_moisture < self.min_soil_moisture and time_difference > minutes):
             self.run_water_pump()
-    
+    """
     def switch_light(self, position):
         pass
     
@@ -59,21 +61,3 @@ class ArduinoBoard:
 
     def close_serial(self):
         self.ser.close()
-
-
-"""
-arduino = ArduinoBoard()
-
-while True:
-    val = input("komento:")
-    if val == "1":
-        arduino.run_water_pump(15)
-    elif val == "2":
-        arduino.read_sensors()
-        print(arduino.time_stamp)
-    elif val == "3":
-        arduino.close_serial()
-        break
-    #arduino.read_sensors()
-    #arduino.close_serial()
-"""
