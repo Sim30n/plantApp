@@ -80,8 +80,7 @@ def main():
             sensor_data['light_value'] = arduino.light_value
             sensor_data['water_level'] = arduino.water_level
             sensor_data['soil_moisture'] = arduino.soil_moisture
-            print("""temperature:{}, humidity:{}%, (water tank)distance:{}, 
-                     light:{}, water_level:{}, soil_moisture:{}"""
+            print("temperature:{}, humidity:{}%, (water tank)distance:{}, light:{}, water_level:{}, soil_moisture:{}"
                   .format(sensor_data["temperature"],
                           sensor_data["humidity"], 
                           sensor_data['distance'], 

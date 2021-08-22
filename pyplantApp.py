@@ -20,6 +20,8 @@ class ArduinoBoard:
         self.automate_watering = False
         self.min_soil_moisture = 1000
         self.last_pump_run = datetime.now()
+        self.read_sensors()
+        self.calculate_water_tank_volume()
 
     def read_sensors(self):
         self.ser.write(str.encode("read_sensors"))
@@ -27,7 +29,7 @@ class ArduinoBoard:
         result = self.ser.readline().decode("utf-8")
         strip_result = result.strip()
         split_result = strip_result.split(";")
-        self.distance = split_result[0]
+        self.distance = int(split_result[0])
         self.humidity = split_result[1]
         self.temperature = split_result[2]
         self.light_value = split_result[3]
@@ -39,10 +41,18 @@ class ArduinoBoard:
     def run_water_pump(self):
         if(self.run_water_pump_time != 0):
             run_command = "run_water_pump" + str(self.run_water_pump_time)
-            print(run_command)
+            #print(run_command)
             self.ser.write(str.encode(run_command))
             self.last_pump_run = datetime.now()
             #time.sleep(self.run_water_pump_time+1)
+
+    def calculate_water_tank_volume(self):
+        height = 45
+        width = 23.5
+        depth = 28
+        water_tank_volume = ((height - self.distance) * width * depth) / 1000 # liters
+        print(water_tank_volume)
+        return water_tank_volume
             
     """
     def auto_watering(self):
