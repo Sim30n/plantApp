@@ -1,17 +1,17 @@
 // First we include the libraries
 #include "DHT.h"
 
-
+/* pin setup */
 #define echoPin 2 // attach pin D2 Arduino to pin Echo of HC-SR04
 #define trigPin 3 //attach pin D3 Arduino to pin Trig of HC-SR04
 #define DHTPIN 4    // modify to the pin we connected
 #define DHTTYPE DHT21   // AM2301 
-#define RELAY1 5
-#define RELAY2 6 // water pump
-// define RELAY3 x
-// define RELAY4 x
-// define RELAY5 x
-// define RELAY6 x
+#define RELAY3 6
+#define RELAY4 5 // water pump
+#define RELAY5 7
+#define RELAY6 11
+#define RELAY7 12
+#define RELAY8 13
 #define SOIL 8
 #define WLEVEL 10
 
@@ -21,6 +21,7 @@ int distance;
 int soilSensorValue;
 int water_level;
 int soil_moisture;
+int pump_n_int;
 
 /* floats */
 float humidity;
@@ -37,6 +38,7 @@ long duration;
 /* strings */
 String val;
 String run_time;
+String pump_n;
 
 
 DHT dht(DHTPIN, DHTTYPE);
@@ -44,14 +46,23 @@ DHT dht(DHTPIN, DHTTYPE);
 void setup() {
   pinMode(trigPin, OUTPUT); // Sets the trigPin as an OUTPUT
   pinMode(echoPin, INPUT); // Sets the echoPin as an INPUT
-  pinMode(RELAY1, OUTPUT);
-  pinMode(RELAY2, OUTPUT);
+  pinMode(RELAY3, OUTPUT);
+  pinMode(RELAY4, OUTPUT);
+  pinMode(RELAY5, OUTPUT);
+  pinMode(RELAY6, OUTPUT);
+  pinMode(RELAY7, OUTPUT);
+  pinMode(RELAY8, OUTPUT);
   pinMode(WLEVEL, INPUT);
   pinMode(SOIL, OUTPUT);
   Serial.begin(9600); // // Serial Communication is starting with 9600 of baudrate speed
   dht.begin();
 
-  digitalWrite(RELAY2, HIGH); // Switch off the water pump
+  digitalWrite(RELAY3, HIGH);
+  digitalWrite(RELAY4, HIGH); // Switch off the water pump
+  digitalWrite(RELAY5, HIGH);
+  digitalWrite(RELAY6, HIGH);
+  digitalWrite(RELAY7, HIGH);
+  digitalWrite(RELAY8, HIGH);
 }
 void loop() {
 
@@ -87,6 +98,7 @@ void loop() {
         /* 
         Logic for running the water pump. The water pump will stop
         after given seconds or when the water level reaches to the high level sensor.  
+        TODO: Make function.
         */
         {
             run_time = val.substring(14,17);
@@ -94,21 +106,26 @@ void loop() {
             startMillis = millis();        
             interval = run_time_int * 1000; 
             stopMills = interval + startMillis;
-            digitalWrite(RELAY2, LOW); // water pump on
+            digitalWrite(RELAY4, LOW); // water pump on
             
             while(true){
                 currentMillis = millis();
                 water_level = digitalRead(WLEVEL); // high level sensor
                 if (currentMillis >= stopMills || water_level == 1) {
-                    digitalWrite(RELAY2, HIGH); //water pump off
+                    digitalWrite(RELAY4, HIGH); //water pump off
                     break;
                 }
             }
         }
+        else if (val.substring(0,19) == "run_fertilizer_pump")
+        {
+            run_fertilizer_pump(val);
+        }
     }
 }
 
-int ultrasonic_distance(){
+int ultrasonic_distance()
+{
     // defines variables
     duration; // variable for the duration of sound wave travel
     distance; // variable for the distance measurement
@@ -126,10 +143,31 @@ int ultrasonic_distance(){
     return distance;
 }
 
-int read_soil(){
+int read_soil()
+{
     digitalWrite(SOIL, HIGH);
     delay(3000);
     soilSensorValue = analogRead(A1);
     digitalWrite(SOIL, LOW);
     return soilSensorValue;
+}
+
+void run_fertilizer_pump(String val)
+{
+    pump_n = val.substring(19,21);
+    pump_n_int = pump_n.toInt();
+    run_time = val.substring(21,24);
+    run_time_int = run_time.toInt();
+    startMillis = millis();        
+    interval = run_time_int * 1000; 
+    stopMills = interval + startMillis;
+    digitalWrite(pump_n_int, LOW); // water pump on
+    while(true){
+        currentMillis = millis();
+        if (currentMillis >= stopMills) 
+        {
+            digitalWrite(pump_n_int, HIGH); //water pump off
+            break;
+        }
+    }
 }
