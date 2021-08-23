@@ -66,7 +66,7 @@ void setup() {
 }
 
 /* 
- * Main lopp. Wait for serial commands.
+ * Main loop. Wait for serial commands.
  */
 void loop() {
 
