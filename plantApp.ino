@@ -64,58 +64,22 @@ void setup() {
   digitalWrite(RELAY7, HIGH);
   digitalWrite(RELAY8, HIGH);
 }
+
+/* 
+ * Main lopp. Wait for serial commands.
+ */
 void loop() {
 
     // reply only when you receive data:
     if (Serial.available() > 0) {
-        
         val = Serial.readStringUntil('\n');
         if(val == "read_sensors")
-        /* logic for sending sensor values to serial */
         {
-            distance = ultrasonic_distance();
-            humidity = dht.readHumidity();
-            temperature = dht.readTemperature();
-            light_value = analogRead(A0);
-            water_level = digitalRead(WLEVEL);
-            soil_moisture = read_soil();
-
-            Serial.print(20);
-            Serial.print(";");
-            Serial.print(humidity);
-            Serial.print(";");
-            Serial.print(temperature);
-            Serial.print(";");
-            Serial.print(light_value);
-            Serial.print(";");
-            Serial.print(water_level);
-            Serial.print(";");
-            Serial.print(soil_moisture);
-            Serial.println();
+            read_sensors(); 
         }
-
         else if (val.substring(0,14) == "run_water_pump")
-        /* 
-        Logic for running the water pump. The water pump will stop
-        after given seconds or when the water level reaches to the high level sensor.  
-        TODO: Make function.
-        */
         {
-            run_time = val.substring(14,17);
-            run_time_int = run_time.toInt();
-            startMillis = millis();        
-            interval = run_time_int * 1000; 
-            stopMills = interval + startMillis;
-            digitalWrite(RELAY4, LOW); // water pump on
-            
-            while(true){
-                currentMillis = millis();
-                water_level = digitalRead(WLEVEL); // high level sensor
-                if (currentMillis >= stopMills || water_level == 1) {
-                    digitalWrite(RELAY4, HIGH); //water pump off
-                    break;
-                }
-            }
+            run_water_pump(val);            
         }
         else if (val.substring(0,19) == "run_fertilizer_pump")
         {
@@ -124,6 +88,9 @@ void loop() {
     }
 }
 
+/* 
+ * Function for mesuring the distance of water level from the top of the tank
+ */
 int ultrasonic_distance()
 {
     // defines variables
@@ -143,6 +110,9 @@ int ultrasonic_distance()
     return distance;
 }
 
+/* 
+ * Read soil moisture from sensor. 
+ */
 int read_soil()
 {
     digitalWrite(SOIL, HIGH);
@@ -152,6 +122,11 @@ int read_soil()
     return soilSensorValue;
 }
 
+/* 
+ * Function for running the fertilizer pump. The water pump will stop
+ * after given seconds. Example command: run_fertilizer_pump07120
+ * run fertilizer pump number 7 for 120 seconds.
+ */
 void run_fertilizer_pump(String val)
 {
     pump_n = val.substring(19,21);
@@ -161,13 +136,61 @@ void run_fertilizer_pump(String val)
     startMillis = millis();        
     interval = run_time_int * 1000; 
     stopMills = interval + startMillis;
-    digitalWrite(pump_n_int, LOW); // water pump on
+    digitalWrite(pump_n_int, LOW); // fertilizer pump on, 4 possible pumps
     while(true){
         currentMillis = millis();
         if (currentMillis >= stopMills) 
         {
-            digitalWrite(pump_n_int, HIGH); //water pump off
+            digitalWrite(pump_n_int, HIGH); // fertilizer pump off
             break;
         }
     }
+}
+
+/* 
+ * Function for running the water pump. The water pump will stop
+ * after given seconds or when the water level reaches to the high level sensor.  
+ */
+void run_water_pump(String val)
+{
+    run_time = val.substring(14,17);
+    run_time_int = run_time.toInt();
+    startMillis = millis();        
+    interval = run_time_int * 1000; 
+    stopMills = interval + startMillis;
+    digitalWrite(RELAY4, LOW); // water pump on
+    
+    while(true){
+        currentMillis = millis();
+        water_level = digitalRead(WLEVEL); // high level sensor
+        if (currentMillis >= stopMills || water_level == 1) {
+            digitalWrite(RELAY4, HIGH); //water pump off
+            break;
+        }
+    }
+}
+
+/* 
+ * Function for reading latest sensor data. Prints values to serial  
+ */
+void read_sensors(){
+    distance = ultrasonic_distance();
+    humidity = dht.readHumidity();
+    temperature = dht.readTemperature();
+    light_value = analogRead(A0);
+    water_level = digitalRead(WLEVEL);
+    soil_moisture = read_soil();
+
+    Serial.print(20);
+    Serial.print(";");
+    Serial.print(humidity);
+    Serial.print(";");
+    Serial.print(temperature);
+    Serial.print(";");
+    Serial.print(light_value);
+    Serial.print(";");
+    Serial.print(water_level);
+    Serial.print(";");
+    Serial.print(soil_moisture);
+    Serial.println();
 }
