@@ -90,7 +90,7 @@ def main():
             client.publish('v1/devices/me/telemetry', json.dumps(sensor_data), 1)
 
             """
-            This logic is for determining the time deifference between sending 
+            This logic is for determining the time difference between sending 
             the arduino sensor data to the Thingsboard user interface.
             """
             next_reading += INTERVAL
@@ -98,7 +98,6 @@ def main():
             if sleep_time > 0:
                 time.sleep(sleep_time)
     
-
             """
             This logic is for using the water automation option.
             No function can be used because of asynchronous type of operation by mqtt library.  
@@ -106,7 +105,7 @@ def main():
             """  
             time_now = datetime.now()
             time_difference = time_now - arduino.last_pump_run
-            minutes  = timedelta(seconds=60)   
+            minutes = timedelta(seconds=60)   
             if arduino.automate_watering == True and  \
                arduino.soil_moisture < arduino.min_soil_moisture and \
                time_difference > minutes:

@@ -20,6 +20,7 @@ class ArduinoBoard:
         self.automate_watering = False
         self.min_soil_moisture = 1000
         self.last_pump_run = datetime.now()
+        self.water_tank_volume = None
         self.read_sensors()
         self.calculate_water_tank_volume()
 
@@ -50,9 +51,18 @@ class ArduinoBoard:
         height = 45
         width = 23.5
         depth = 28
-        water_tank_volume = ((height - self.distance) * width * depth) / 1000 # liters
-        print(water_tank_volume)
-        return water_tank_volume
+        self.water_tank_volume = ((height - self.distance) * width * depth) / 1000 # liters
+
+    def run_fertilizer_pump(self):
+        """
+        Method for running fertilizer pump.
+        TODO: Resolve how to determine pump numbeer and run time.        
+        """
+        pump_n = "07"
+        run_fertilizer_pump_time = 100
+        run_command = "run_fertilizer_pump" + pump_n + str(run_fertilizer_pump_time)
+        self.ser.write(str.encode(run_command))
+        
             
     """
     def auto_watering(self):
