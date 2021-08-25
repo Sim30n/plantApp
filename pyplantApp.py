@@ -51,28 +51,22 @@ class ArduinoBoard:
         height = 45
         width = 23.5
         depth = 28
-        self.water_tank_volume = ((height - self.distance) * width * depth) / 1000 # liters
+        self.water_tank_volume = (((height - self.distance) 
+                                  * width * depth) / 1000) # liters
 
     def run_fertilizer_pump(self):
-        """
+        """Return None
+
         Method for running fertilizer pump.
-        TODO: Resolve how to determine pump numbeer and run time.        
+        TODO: Resolve how to determine pump numbeer and run time.            
         """
         pump_n = "07"
         run_fertilizer_pump_time = 100
-        run_command = "run_fertilizer_pump" + pump_n + str(run_fertilizer_pump_time)
+        run_command = ("run_fertilizer_pump" 
+                       + pump_n 
+                       + str(run_fertilizer_pump_time))
         self.ser.write(str.encode(run_command))
         
-            
-    """
-    def auto_watering(self):
-        time_now = datetime.now()
-        time_difference = time_now - self.last_pump_run
-        minutes  = timedelta(seconds=60)
-        print(time_difference.total_seconds())
-        if(self.soil_moisture < self.min_soil_moisture and time_difference > minutes):
-            self.run_water_pump()
-    """
     def switch_light(self, position):
         pass
     

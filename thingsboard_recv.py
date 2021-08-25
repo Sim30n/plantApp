@@ -69,10 +69,10 @@ def main():
     try:
         client.loop_start()
         while True:
-            """
-            Read the sensors, print values to the terminal
-            and puplish values as telemetry data to thing board
-            """
+            
+            # Read the sensors, print values to the terminal
+            # and puplish values as telemetry data to thing board
+            
             arduino.read_sensors()           
             sensor_data['temperature'] = arduino.temperature
             sensor_data['humidity'] = arduino.humidity
@@ -80,7 +80,12 @@ def main():
             sensor_data['light_value'] = arduino.light_value
             sensor_data['water_level'] = arduino.water_level
             sensor_data['soil_moisture'] = arduino.soil_moisture
-            print("temperature:{}, humidity:{}%, (water tank)distance:{}, light:{}, water_level:{}, soil_moisture:{}"
+            print("temperature:{}, " 
+                  "humidity:{}%, "
+                  "(water tank)distance:{}, "
+                  "light:{}, " 
+                  "water_level:{}, " 
+                  "soil_moisture:{}"
                   .format(sensor_data["temperature"],
                           sensor_data["humidity"], 
                           sensor_data['distance'], 
@@ -89,20 +94,21 @@ def main():
                           sensor_data['soil_moisture']))
             client.publish('v1/devices/me/telemetry', json.dumps(sensor_data), 1)
 
-            """
-            This logic is for determining the time difference between sending 
-            the arduino sensor data to the Thingsboard user interface.
-            """
+        
+            # This logic is for determining the time difference between sending 
+            # the arduino sensor data to the Thingsboard user interface.
+            
             next_reading += INTERVAL
             sleep_time = next_reading-time.time()
             if sleep_time > 0:
                 time.sleep(sleep_time)
     
-            """
-            This logic is for using the water automation option.
-            No function can be used because of asynchronous type of operation by mqtt library.  
-            TODO: function can be used if time.sleep is used inside this while loop
-            """  
+    
+            # This logic is for using the water automation option.
+            # No function can be used because of asynchronous type of operation 
+            # by mqtt library. TODO: function can be used if time.sleep is used
+            # inside this while loop
+              
             time_now = datetime.now()
             time_difference = time_now - arduino.last_pump_run
             minutes = timedelta(seconds=60)   
