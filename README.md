@@ -15,3 +15,10 @@ ctrl + a, k, y
 
 # activate virtual environment for python
 source venv/bin/activate
+
+# run pumps
+run_fertilizer_pump13003
+run_fertilizer_pump12003
+run_fertilizer_pump11003
+run_fertilizer_pump07003
+run_water_pump003
