@@ -17,7 +17,7 @@ ctrl + a, k, y
 source venv/bin/activate
 
 # run pumps
-run_fertilizer_pump13003
+run_fertilizer_pump13120 - first run 1,5dl/120sec
 run_fertilizer_pump12003
 run_fertilizer_pump11003
 run_fertilizer_pump07003
