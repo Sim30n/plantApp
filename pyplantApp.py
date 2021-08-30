@@ -10,7 +10,7 @@ class ArduinoBoard:
 
     def __init__(self):
         self.time_stamp = None
-        self.distance = None
+        self.distance = None # remove when not used!
         self.humidity = None
         self.temperature = None
         self.light_value = None
@@ -22,7 +22,7 @@ class ArduinoBoard:
         self.last_pump_run = datetime.now()
         self.water_tank_volume = None
         self.read_sensors()
-        self.calculate_water_tank_volume()
+        #self.calculate_water_tank_volume()
 
     def read_sensors(self):
         self.ser.write(str.encode("read_sensors"))
@@ -37,6 +37,7 @@ class ArduinoBoard:
         self.water_level = split_result[4]
         self.soil_moisture = int(split_result[5])
         self.time_stamp = datetime.now()
+        self.water_tank_volume = self.calculate_water_tank_volume(int(split_result[0]))
         time.sleep(1)
         
     def run_water_pump(self):
@@ -47,12 +48,13 @@ class ArduinoBoard:
             self.last_pump_run = datetime.now()
             #time.sleep(self.run_water_pump_time+1)
 
-    def calculate_water_tank_volume(self):
+    def calculate_water_tank_volume(self, distance):
         height = 45
         width = 23.5
         depth = 28
-        self.water_tank_volume = (((height - self.distance) 
-                                  * width * depth) / 1000) # liters
+        water_tank_volume = (((height - distance) 
+                               * width * depth) / 1000) # liters
+        return water_tank_volume
 
     def run_fertilizer_pump(self):
         """Return None

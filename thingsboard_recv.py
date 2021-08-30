@@ -13,12 +13,13 @@ ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
 INTERVAL=2
 
 sensor_data = {
-    'temperature': 0, 
-    'humidity': 0,
-    'distance': 0,
-    'light_value': 0,
-    'water_level': 0,
-    'soil_moisture': 0,
+    "temperature": 0, 
+    "humidity": 0,
+    "distance": 0,
+    "light_value": 0,
+    "water_level": 0,
+    "soil_moisture": 0,
+    "tank_volume":0,
     }
 
 arduino = ArduinoBoard()
@@ -80,18 +81,21 @@ def main():
             sensor_data['light_value'] = arduino.light_value
             sensor_data['water_level'] = arduino.water_level
             sensor_data['soil_moisture'] = arduino.soil_moisture
+            sensor_data["tank_volume"] = arduino.water_tank_volume
             print("temperature:{}, " 
                   "humidity:{}%, "
                   "(water tank)distance:{}, "
                   "light:{}, " 
                   "water_level:{}, " 
-                  "soil_moisture:{}"
+                  "soil_moisture:{}, "
+                  "tank_volume:{}"
                   .format(sensor_data["temperature"],
                           sensor_data["humidity"], 
                           sensor_data['distance'], 
                           sensor_data['light_value'],
                           sensor_data['water_level'],
-                          sensor_data['soil_moisture']))
+                          sensor_data['soil_moisture'],
+                          sensor_data['tank_volume']))
             client.publish('v1/devices/me/telemetry', json.dumps(sensor_data), 1)
 
         
