@@ -18,11 +18,16 @@ class ArduinoBoard:
         self.soil_moisture = None
         self.run_water_pump_time = 0 # set time from thingsboard
         self.automate_watering = False
-        self.min_soil_moisture = 1000
+        self.min_soil_moisture = 0
         self.last_pump_run = datetime.now()
         self.water_tank_volume = None
         self.read_sensors()
         #self.calculate_water_tank_volume()
+
+        self.fertilizer_1_pump_time = 0
+        self.fertilizer_2_pump_time = 0
+        self.fertilizer_3_pump_time = 0
+        self.fertilizer_4_pump_time = 0
 
     def read_sensors(self):
         self.ser.write(str.encode("read_sensors"))
@@ -56,18 +61,20 @@ class ArduinoBoard:
                                * width * depth) / 1000) # liters
         return water_tank_volume
 
-    def run_fertilizer_pump(self):
+    def run_fertilizer_pump(self, pump_n, run_time):
         """Return None
 
         Method for running fertilizer pump.
         TODO: Resolve how to determine pump numbeer and run time.            
         """
-        pump_n = "07"
-        run_fertilizer_pump_time = 100
-        run_command = ("run_fertilizer_pump" 
-                       + pump_n 
-                       + str(run_fertilizer_pump_time))
-        self.ser.write(str.encode(run_command))
+        #pump_n = "07"
+        #run_fertilizer_pump_time = 100
+        print(pump_n, run_time)
+        if(int(run_time) != 0):
+            run_command = ("run_fertilizer_pump" 
+                        + pump_n 
+                        + run_time)
+            self.ser.write(str.encode(run_command))
         
     def switch_light(self, position):
         pass

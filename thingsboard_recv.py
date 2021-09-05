@@ -40,8 +40,21 @@ def on_message(client, userdata, msg):
     # Check request method
     print(data) # prints the incoming message from thingsboard
     if data["method"] == "run_water_pump":
+        time.sleep(1)
+        arduino.run_fertilizer_pump("07", str(arduino.fertilizer_1_pump_time))
+        time.sleep(arduino.fertilizer_1_pump_time+2)
+
+        arduino.run_fertilizer_pump("11", str(arduino.fertilizer_2_pump_time))
+        time.sleep(arduino.fertilizer_2_pump_time+2)
+
+        arduino.run_fertilizer_pump("12", str(arduino.fertilizer_3_pump_time))
+        time.sleep(arduino.fertilizer_3_pump_time+2)
+
+        arduino.run_fertilizer_pump("13", str(arduino.fertilizer_4_pump_time))
+        time.sleep(arduino.fertilizer_4_pump_time+2)
+        
         arduino.run_water_pump()
-        time.sleep(arduino.run_water_pump_time+1) # wait for the pump to stop running
+        time.sleep(arduino.run_water_pump_time+2) # wait for the pump to stop running
     elif data['method'] == 'getPumpRuntime':
         # Reply getPumpRuntime 
         client.publish(msg.topic.replace('request', 'response'), arduino.run_water_pump_time, 1)
@@ -52,6 +65,43 @@ def on_message(client, userdata, msg):
         arduino.automate_watering = data["params"]
     elif data['method'] == 'getAutoWatering':    
         client.publish(msg.topic.replace('request', 'response'), int(arduino.automate_watering), 1)
+
+    elif data['method'] == 'getFertilizer1':
+        # Reply getPumpRuntime 
+        client.publish(msg.topic.replace('request', 'response'), arduino.fertilizer_1_pump_time, 1)
+    elif data['method'] == 'setFertilizer1':
+        # set pump run time
+        arduino.fertilizer_1_pump_time = data["params"]
+
+    elif data['method'] == 'getFertilizer2':
+        # Reply getPumpRuntime 
+        client.publish(msg.topic.replace('request', 'response'), arduino.fertilizer_2_pump_time, 1)
+    elif data['method'] == 'setFertilizer2':
+        # set pump run time
+        arduino.fertilizer_2_pump_time = data["params"]
+    
+    elif data['method'] == 'getFertilizer3':
+        # Reply getPumpRuntime 
+        client.publish(msg.topic.replace('request', 'response'), arduino.fertilizer_3_pump_time, 1)
+    elif data['method'] == 'setFertilizer3':
+        # set pump run time
+        arduino.fertilizer_3_pump_time = data["params"]
+    
+    elif data['method'] == 'getFertilizer4':
+        # Reply getPumpRuntime 
+        client.publish(msg.topic.replace('request', 'response'), arduino.fertilizer_4_pump_time, 1)
+    elif data['method'] == 'setFertilizer4':
+        # set pump run time
+        arduino.fertilizer_4_pump_time = data["params"]
+
+    elif data['method'] == 'getSoilMoisture':
+        # Reply getPumpRuntime 
+        client.publish(msg.topic.replace('request', 'response'), arduino.min_soil_moisture, 1)
+    elif data['method'] == 'setSoilMoisture':
+        # set pump run time
+        arduino.min_soil_moisture = data["params"]
+
+    
 
 
 def main():
