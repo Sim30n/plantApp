@@ -181,7 +181,7 @@ void read_sensors(){
     water_level = digitalRead(WLEVEL);
     soil_moisture = read_soil();
 
-    Serial.print(20);
+    Serial.print(distance);
     Serial.print(";");
     Serial.print(humidity);
     Serial.print(";");
