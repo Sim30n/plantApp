@@ -40,21 +40,8 @@ def on_message(client, userdata, msg):
     # Check request method
     print(data) # prints the incoming message from thingsboard
     if data["method"] == "run_water_pump":
-        time.sleep(1)
-        arduino.run_fertilizer_pump("07", str(arduino.fertilizer_1_pump_time))
-        time.sleep(arduino.fertilizer_1_pump_time+2)
+        run_pumps()
 
-        arduino.run_fertilizer_pump("11", str(arduino.fertilizer_2_pump_time))
-        time.sleep(arduino.fertilizer_2_pump_time+2)
-
-        arduino.run_fertilizer_pump("12", str(arduino.fertilizer_3_pump_time))
-        time.sleep(arduino.fertilizer_3_pump_time+2)
-
-        arduino.run_fertilizer_pump("13", str(arduino.fertilizer_4_pump_time))
-        time.sleep(arduino.fertilizer_4_pump_time+2)
-        
-        arduino.run_water_pump()
-        time.sleep(arduino.run_water_pump_time+2) # wait for the pump to stop running
     elif data['method'] == 'getPumpRuntime':
         # Reply getPumpRuntime 
         client.publish(msg.topic.replace('request', 'response'), arduino.run_water_pump_time, 1)
@@ -101,8 +88,25 @@ def on_message(client, userdata, msg):
         # set pump run time
         arduino.min_soil_moisture = data["params"]
 
-    
+def run_pumps():
+    """
+    Function for running the water pump and fertilizer pumps.
+    """
+    time.sleep(1)
+    arduino.run_fertilizer_pump("07", str(arduino.fertilizer_1_pump_time))
+    time.sleep(arduino.fertilizer_1_pump_time+2)
 
+    arduino.run_fertilizer_pump("11", str(arduino.fertilizer_2_pump_time))
+    time.sleep(arduino.fertilizer_2_pump_time+2)
+
+    arduino.run_fertilizer_pump("12", str(arduino.fertilizer_3_pump_time))
+    time.sleep(arduino.fertilizer_3_pump_time+2)
+
+    arduino.run_fertilizer_pump("13", str(arduino.fertilizer_4_pump_time))
+    time.sleep(arduino.fertilizer_4_pump_time+2)
+    
+    arduino.run_water_pump()
+    time.sleep(arduino.run_water_pump_time+2) # wait for the pump to stop running
 
 def main():
     client = mqtt.Client()
@@ -169,8 +173,9 @@ def main():
             if arduino.automate_watering == True and  \
                arduino.soil_moisture < arduino.min_soil_moisture and \
                time_difference > minutes:
-                arduino.run_water_pump() 
-                time.sleep(arduino.run_water_pump_time+1)
+                run_pumps()
+                #arduino.run_water_pump() 
+                #time.sleep(arduino.run_water_pump_time+1)
 
     except KeyboardInterrupt:
         pass
