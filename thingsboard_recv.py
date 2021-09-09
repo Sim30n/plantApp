@@ -163,9 +163,6 @@ def main():
     
     
             # This logic is for using the water automation option.
-            # No function can be used because of asynchronous type of operation 
-            # by mqtt library. TODO: function can be used if time.sleep is used
-            # inside this while loop
               
             time_now = datetime.now()
             time_difference = time_now - arduino.last_pump_run
@@ -178,6 +175,7 @@ def main():
                 #time.sleep(arduino.run_water_pump_time+1)
 
     except KeyboardInterrupt:
+        arduino.close_serial()
         pass
 
     client.loop_stop()

@@ -22,14 +22,18 @@ class ArduinoBoard:
         self.last_pump_run = datetime.now()
         self.water_tank_volume = None
         self.read_sensors()
-        #self.calculate_water_tank_volume()
 
+        # fertilizer pump running times
         self.fertilizer_1_pump_time = 0
         self.fertilizer_2_pump_time = 0
         self.fertilizer_3_pump_time = 0
         self.fertilizer_4_pump_time = 0
 
     def read_sensors(self):
+        """"
+        
+        This method will ask the latest sensor values from arduino board.
+        """
         self.ser.write(str.encode("read_sensors"))
         time.sleep(3)
         result = self.ser.readline().decode("utf-8")
@@ -48,12 +52,15 @@ class ArduinoBoard:
     def run_water_pump(self):
         if(self.run_water_pump_time != 0):
             run_command = "run_water_pump" + str(self.run_water_pump_time)
-            #print(run_command)
             self.ser.write(str.encode(run_command))
             self.last_pump_run = datetime.now()
-            #time.sleep(self.run_water_pump_time+1)
 
     def calculate_water_tank_volume(self, distance):
+        """ Return float
+        
+        Water tank is a 20 liter container. This method is for
+        calculating the volume of the tank.
+        """
         height = 45
         width = 23.5
         depth = 28
@@ -64,11 +71,8 @@ class ArduinoBoard:
     def run_fertilizer_pump(self, pump_n, run_time):
         """Return None
 
-        Method for running fertilizer pump.
-        TODO: Resolve how to determine pump numbeer and run time.            
+        Method for running fertilizer pump.      
         """
-        #pump_n = "07"
-        #run_fertilizer_pump_time = 100
         print(pump_n, run_time)
         if(int(run_time) != 0):
             run_command = ("run_fertilizer_pump" 
@@ -77,10 +81,16 @@ class ArduinoBoard:
             self.ser.write(str.encode(run_command))
         
     def switch_light(self, position):
-        pass
-    
-    def save_sensor_values(self):
+        """
+
+        No electric light at the time of writing.
+        This will be implemented in the future.
+        """
         pass
 
     def close_serial(self):
+        """
+        
+        Close the serial connection when no longer needed.
+        """
         self.ser.close()
