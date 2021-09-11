@@ -92,7 +92,7 @@ def run_pumps():
     """
     Function for running the water pump and fertilizer pumps.
     """
-    time.sleep(1)
+    time.sleep(2)
     arduino.run_fertilizer_pump("07", str(arduino.fertilizer_1_pump_time))
     time.sleep(arduino.fertilizer_1_pump_time+2)
 
