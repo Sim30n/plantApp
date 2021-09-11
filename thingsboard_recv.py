@@ -10,7 +10,7 @@ load_dotenv()
 
 THINGSBOARD_HOST = os.environ['THINGSBOARD_HOST']
 ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
-INTERVAL=2
+INTERVAL=60
 
 sensor_data = {
     "temperature": 0, 
@@ -166,18 +166,16 @@ def main():
               
             time_now = datetime.now()
             time_difference = time_now - arduino.last_pump_run
-            minutes = timedelta(seconds=60)   
+            minutes = timedelta(seconds=60) # min time from last run  
             if arduino.automate_watering == True and  \
                arduino.soil_moisture < arduino.min_soil_moisture and \
                time_difference > minutes:
                 run_pumps()
-                #arduino.run_water_pump() 
-                #time.sleep(arduino.run_water_pump_time+1)
 
     except KeyboardInterrupt:
-        arduino.close_serial()
         pass
-
+    
+    arduino.close_serial()
     client.loop_stop()
     client.disconnect()
 

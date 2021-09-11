@@ -22,3 +22,5 @@ run_fertilizer_pump12003
 run_fertilizer_pump11003
 run_fertilizer_pump07003
 run_water_pump003
+
+# water pump ~3l/10sec

@@ -50,6 +50,11 @@ class ArduinoBoard:
         time.sleep(1)
         
     def run_water_pump(self):
+        """
+        
+        This method will run the water pump for given time.
+        The pump capacity is 16l/1min. 
+        """
         if(self.run_water_pump_time != 0):
             run_command = "run_water_pump" + str(self.run_water_pump_time)
             self.ser.write(str.encode(run_command))

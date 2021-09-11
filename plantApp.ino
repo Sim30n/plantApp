@@ -8,10 +8,10 @@
 #define DHTTYPE DHT21   // AM2301 
 #define RELAY3 6
 #define RELAY4 5 // water pump
-#define RELAY5 7
-#define RELAY6 11
-#define RELAY7 12
-#define RELAY8 13
+#define RELAY5 7 // fertilizer pump 1
+#define RELAY6 11 // fertilizer pump 2
+#define RELAY7 12 // fertilizer pump 3
+#define RELAY8 13 // fertilizer pump 4
 #define SOIL 8
 #define WLEVEL 10
 
