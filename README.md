@@ -12,7 +12,7 @@ Build software \
 Upload hex to arduino board \
 `arduino-cli upload -p /dev/ttyACM0 --fqbn arduino:avr:uno plantApp`
 
-## Use Arduino serial in terminal
+## Use Arduino serial in screen terminal
 
 Start serial in ubuntu \
 `sudo screen /dev/ttyACM0 9600` 
