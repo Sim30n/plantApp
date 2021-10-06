@@ -1,26 +1,38 @@
-# print board list to get the right port
-arduino-cli board list
+# plantApp
 
-# compile software
-arduino-cli compile --fqbn arduino:avr:uno plantApp
 
-# upload hex to arduino board
-arduino-cli upload -p /dev/ttyACM0 --fqbn arduino:avr:uno plantApp
+## Installation
 
-# start serial in ubuntu
-sudo screen /dev/ttyACM0 9600
+List boards get the right USB port.
+`arduino-cli board list`
 
-# kill serial terminal session
-ctrl + a, k, y
+Build software.
+`arduino-cli compile --fqbn arduino:avr:uno plantApp`
 
-# activate virtual environment for python
-source venv/bin/activate
+Upload hex to arduino board.
+`arduino-cli upload -p /dev/ttyACM0 --fqbn arduino:avr:uno plantApp`
 
-# run pumps
-run_fertilizer_pump13120 - first run 1,5dl/120sec
-run_fertilizer_pump12003
-run_fertilizer_pump11003
-run_fertilizer_pump07003
-run_water_pump003
+## Use Arduino serial in terminal
 
-# water pump ~3l/10sec
+Start serial in ubuntu.
+`sudo screen /dev/ttyACM0 9600`
+
+Run pumps in serial terminal
+`run_fertilizer_pump13120` first run 1,5dl/120sec
+`run_fertilizer_pump12003`
+`run_fertilizer_pump11003`
+`run_fertilizer_pump07003`
+`run_water_pump003`
+
+Kill serial terminal session.
+`ctrl + a, k, y`
+
+## Start app
+
+Activate python virtual environment.
+`source venv/bin/activate`
+
+Start plantApp.
+`python thingsboard_recv.py`
+
+

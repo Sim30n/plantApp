@@ -78,7 +78,6 @@ class ArduinoBoard:
 
         Method for running fertilizer pump.      
         """
-        print(pump_n, run_time)
         if(int(run_time) != 0):
             run_command = ("run_fertilizer_pump" 
                         + pump_n 

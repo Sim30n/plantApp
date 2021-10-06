@@ -10,7 +10,7 @@ load_dotenv()
 
 THINGSBOARD_HOST = os.environ['THINGSBOARD_HOST']
 ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
-INTERVAL=60
+INTERVAL = 600 # Send data between 10 min. intervals. 
 
 sensor_data = {
     "temperature": 0, 
