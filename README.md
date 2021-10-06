@@ -17,14 +17,15 @@ Upload hex to arduino board \
 Start serial in ubuntu \
 `sudo screen /dev/ttyACM0 9600` 
 
-Run pumps in serial terminal  
+### Run pumps in serial terminal  
+
 Fertilizer pump number 1 (120 sec.) \
 `run_fertilizer_pump13120` 
 
-Fertilizer pump number 2 (3 sec) \ 
+Fertilizer pump number 2 (3 sec.) \ 
 `run_fertilizer_pump12003`
 
-Fertilizer pump number 3 (2 sec.) \ 
+Fertilizer pump number 3 (3 sec.) \ 
 `run_fertilizer_pump11003`
 
 Fertilizer pump number 4 (3 sec.) \
