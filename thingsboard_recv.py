@@ -10,7 +10,8 @@ load_dotenv()
 
 THINGSBOARD_HOST = os.environ['THINGSBOARD_HOST']
 ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
-INTERVAL = 600 # Send data between 10 min. intervals. 
+INTERVAL = 30 # Send data between 10 min. intervals. 
+send_data = True
 
 sensor_data = {
     "temperature": 0, 
@@ -40,8 +41,10 @@ def on_message(client, userdata, msg):
     # Check request method
     print(data) # prints the incoming message from thingsboard
     if data["method"] == "run_water_pump":
+        global send_data
+        send_data = False
         run_pumps()
-
+        send_data = True
     elif data['method'] == 'getPumpRuntime':
         # Reply getPumpRuntime 
         client.publish(msg.topic.replace('request', 'response'), arduino.run_water_pump_time, 1)
@@ -127,30 +130,30 @@ def main():
             
             # Read the sensors, print values to the terminal
             # and puplish values as telemetry data to thing board
-            
-            arduino.read_sensors()           
-            sensor_data['temperature'] = arduino.temperature
-            sensor_data['humidity'] = arduino.humidity
-            sensor_data['distance'] = arduino.distance
-            sensor_data['light_value'] = arduino.light_value
-            sensor_data['water_level'] = arduino.water_level
-            sensor_data['soil_moisture'] = arduino.soil_moisture
-            sensor_data["tank_volume"] = arduino.water_tank_volume
-            print("temperature:{}, " 
-                  "humidity:{}%, "
-                  "(water tank)distance:{}, "
-                  "light:{}, " 
-                  "water_level:{}, " 
-                  "soil_moisture:{}, "
-                  "tank_volume:{}"
-                  .format(sensor_data["temperature"],
-                          sensor_data["humidity"], 
-                          sensor_data['distance'], 
-                          sensor_data['light_value'],
-                          sensor_data['water_level'],
-                          sensor_data['soil_moisture'],
-                          sensor_data['tank_volume']))
-            client.publish('v1/devices/me/telemetry', json.dumps(sensor_data), 1)
+            if send_data:
+                arduino.read_sensors()           
+                sensor_data['temperature'] = arduino.temperature
+                sensor_data['humidity'] = arduino.humidity
+                sensor_data['distance'] = arduino.distance
+                sensor_data['light_value'] = arduino.light_value
+                sensor_data['water_level'] = arduino.water_level
+                sensor_data['soil_moisture'] = arduino.soil_moisture
+                sensor_data["tank_volume"] = arduino.water_tank_volume
+                print("temperature:{}, " 
+                    "humidity:{}%, "
+                    "(water tank)distance:{}, "
+                    "light:{}, " 
+                    "water_level:{}, " 
+                    "soil_moisture:{}, "
+                    "tank_volume:{}"
+                    .format(sensor_data["temperature"],
+                            sensor_data["humidity"], 
+                            sensor_data['distance'], 
+                            sensor_data['light_value'],
+                            sensor_data['water_level'],
+                            sensor_data['soil_moisture'],
+                            sensor_data['tank_volume']))
+                client.publish('v1/devices/me/telemetry', json.dumps(sensor_data), 1)
 
         
             # This logic is for determining the time difference between sending 

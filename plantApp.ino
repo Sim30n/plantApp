@@ -54,8 +54,8 @@ void setup() {
   pinMode(RELAY8, OUTPUT);
   pinMode(WLEVEL, INPUT);
   pinMode(SOIL, OUTPUT);
-  Serial.begin(9600); // // Serial Communication is starting with 9600 of baudrate speed
-  dht.begin();
+  Serial.begin(9600); // Serial Communication is starting with 9600 of baudrate speed
+  dht.begin(); // Temerature & humidity sensor
 
   digitalWrite(RELAY3, HIGH);
   digitalWrite(RELAY4, HIGH); // Switch off the water pump
