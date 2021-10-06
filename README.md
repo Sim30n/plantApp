@@ -18,10 +18,15 @@ Start serial in ubuntu \
 `sudo screen /dev/ttyACM0 9600` 
 
 Run pumps in serial terminal \ 
+Fertilizer pump number 1 (120 sec.) \
 `run_fertilizer_pump13120` 
-`run_fertilizer_pump12003` 
-`run_fertilizer_pump11003` 
-`run_fertilizer_pump07003` 
+Fertilizer pump number 2 (3 sec) \ 
+`run_fertilizer_pump12003`
+Fertilizer pump number 3 (2 sec.) \ 
+`run_fertilizer_pump11003`
+Fertilizer pump number 4 (3 sec.) \
+`run_fertilizer_pump07003`
+Water pump (3 sec.) \
 `run_water_pump003` 
 
 Kill serial terminal session \
