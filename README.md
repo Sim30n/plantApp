@@ -39,7 +39,7 @@ Kill serial terminal session <br />
 
 ## Start app
 
-Creat virtual environment <br />
+Create virtual environment <br />
 `python3 -m venv venv`
 
 Activate python virtual environment <br />
