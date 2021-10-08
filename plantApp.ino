@@ -139,9 +139,11 @@ void run_fertilizer_pump(String val)
     digitalWrite(pump_n_int, LOW); // fertilizer pump on, 4 possible pumps
     while(true){
         currentMillis = millis();
+        Serial.println("1");
         if (currentMillis >= stopMills) 
         {
             digitalWrite(pump_n_int, HIGH); // fertilizer pump off
+            Serial.println("0");
             break;
         }
     }
@@ -163,8 +165,10 @@ void run_water_pump(String val)
     while(true){
         currentMillis = millis();
         water_level = digitalRead(WLEVEL); // high level sensor
+        Serial.println("1");
         if (currentMillis >= stopMills || water_level == 1) {
             digitalWrite(RELAY4, HIGH); //water pump off
+            Serial.println("0");
             break;
         }
     }

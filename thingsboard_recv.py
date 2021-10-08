@@ -97,20 +97,11 @@ def run_pumps():
     """
     time.sleep(2)
     arduino.run_fertilizer_pump("07", str(arduino.fertilizer_1_pump_time))
-    time.sleep(arduino.fertilizer_1_pump_time+2)
-
     arduino.run_fertilizer_pump("11", str(arduino.fertilizer_2_pump_time))
-    time.sleep(arduino.fertilizer_2_pump_time+2)
-
     arduino.run_fertilizer_pump("12", str(arduino.fertilizer_3_pump_time))
-    time.sleep(arduino.fertilizer_3_pump_time+2)
-
     arduino.run_fertilizer_pump("13", str(arduino.fertilizer_4_pump_time))
-    time.sleep(arduino.fertilizer_4_pump_time+2)
-    
     arduino.run_water_pump()
-    time.sleep(arduino.run_water_pump_time+2) # wait for the pump to stop running
-
+    
 def main():
     client = mqtt.Client()
     # Register connect callback

@@ -59,6 +59,12 @@ class ArduinoBoard:
             run_command = "run_water_pump" + str(self.run_water_pump_time)
             self.ser.write(str.encode(run_command))
             self.last_pump_run = datetime.now()
+            # Wait until pump is not running.
+            while(True):
+                read_serial = self.ser.readline().decode("utf-8")
+                strip_serial = int(read_serial.strip())
+                if(strip_serial == 0):
+                    break
 
     def calculate_water_tank_volume(self, distance):
         """ Return float
@@ -83,6 +89,12 @@ class ArduinoBoard:
                         + pump_n 
                         + run_time)
             self.ser.write(str.encode(run_command))
+            # Wait until pump is not running.
+            while(True):
+                read_serial = self.ser.readline().decode("utf-8")
+                strip_serial = int(read_serial.strip())
+                if(strip_serial == 0):
+                    break
         
     def switch_light(self, position):
         """
