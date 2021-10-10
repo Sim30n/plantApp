@@ -55,6 +55,7 @@ class ArduinoBoard:
         This method will run the water pump for given time.
         The pump capacity is 16l/1min. 
         """
+        run_message = "Water pump did not run."
         if(self.run_water_pump_time != 0):
             run_command = "run_water_pump" + str(self.run_water_pump_time)
             self.ser.write(str.encode(run_command))
@@ -64,7 +65,10 @@ class ArduinoBoard:
                 read_serial = self.ser.readline().decode("utf-8")
                 strip_serial = int(read_serial.strip())
                 if(strip_serial == 0):
+                    run_message = f"Water pump ran for {self.run_water_pump_time} seconds."
                     break
+        return run_message
+                
 
     def calculate_water_tank_volume(self, distance):
         """ Return float
@@ -84,6 +88,7 @@ class ArduinoBoard:
 
         Method for running fertilizer pump.      
         """
+        run_message = f"Fertilizer pump number {pump_n} did not run."
         if(int(run_time) != 0):
             run_command = ("run_fertilizer_pump" 
                         + pump_n 
@@ -94,7 +99,9 @@ class ArduinoBoard:
                 read_serial = self.ser.readline().decode("utf-8")
                 strip_serial = int(read_serial.strip())
                 if(strip_serial == 0):
+                    run_message = f"Fertilizer pump number {pump_n} ran for {run_time}."
                     break
+        return run_message
         
     def switch_light(self, position):
         """

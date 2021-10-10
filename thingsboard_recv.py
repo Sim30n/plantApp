@@ -5,12 +5,13 @@ from dotenv import load_dotenv
 from pyplantApp import ArduinoBoard
 import time
 from datetime import datetime, timedelta
+import logging
 
 load_dotenv()
 
 THINGSBOARD_HOST = os.environ['THINGSBOARD_HOST']
 ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
-INTERVAL = 30 # Send data between 10 min. intervals. 
+INTERVAL = 60 # Send data between 10 min. intervals. 
 send_data = True
 
 sensor_data = {
@@ -24,6 +25,8 @@ sensor_data = {
     }
 
 arduino = ArduinoBoard()
+
+logging.basicConfig(filename="log_file.log", filemode="w", format="%(asctime)s %(levelname)s:%(message)s", level=logging.DEBUG)
 
 def on_connect(client, userdata, rc, *extra_params):
     """
@@ -96,11 +99,16 @@ def run_pumps():
     Function for running the water pump and fertilizer pumps.
     """
     time.sleep(2)
-    arduino.run_fertilizer_pump("07", str(arduino.fertilizer_1_pump_time))
-    arduino.run_fertilizer_pump("11", str(arduino.fertilizer_2_pump_time))
-    arduino.run_fertilizer_pump("12", str(arduino.fertilizer_3_pump_time))
-    arduino.run_fertilizer_pump("13", str(arduino.fertilizer_4_pump_time))
-    arduino.run_water_pump()
+    run_fertilizer_pump1 = arduino.run_fertilizer_pump("07", str(arduino.fertilizer_1_pump_time))
+    logging.info(run_fertilizer_pump1)
+    run_fertilizer_pump2 = arduino.run_fertilizer_pump("11", str(arduino.fertilizer_2_pump_time))
+    logging.info(run_fertilizer_pump2)
+    run_fertilizer_pump3 = arduino.run_fertilizer_pump("12", str(arduino.fertilizer_3_pump_time))
+    logging.info(run_fertilizer_pump3)
+    run_fertilizer_pump4 = arduino.run_fertilizer_pump("13", str(arduino.fertilizer_4_pump_time))
+    logging.info(run_fertilizer_pump4)
+    run_water_pump = arduino.run_water_pump()
+    logging.info(run_water_pump)
     
 def main():
     client = mqtt.Client()
@@ -130,7 +138,7 @@ def main():
                 sensor_data['water_level'] = arduino.water_level
                 sensor_data['soil_moisture'] = arduino.soil_moisture
                 sensor_data["tank_volume"] = arduino.water_tank_volume
-                print("temperature:{}, " 
+                sensor_info = ("temperature:{}, " 
                     "humidity:{}%, "
                     "(water tank)distance:{}, "
                     "light:{}, " 
@@ -144,6 +152,8 @@ def main():
                             sensor_data['water_level'],
                             sensor_data['soil_moisture'],
                             sensor_data['tank_volume']))
+                print(sensor_info)
+                logging.info(sensor_info)
                 client.publish('v1/devices/me/telemetry', json.dumps(sensor_data), 1)
 
         

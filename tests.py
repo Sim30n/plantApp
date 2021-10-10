@@ -18,13 +18,19 @@ class BasicTests(unittest.TestCase):
         self.arduino_board.min_soil_moisture = 0
         self.arduino_board.last_pump_run = datetime.now()
         self.arduino_board.water_tank_volume = None
-
+    
     def tearDown(self):
-        self.arduino_board.close_serial()
-
+        #self.arduino_board.close_serial()
+        pass
+    
     def test_water_pump(self):
+        self.arduino_board.run_water_pump_time = 10
         pump_run = self.arduino_board.run_water_pump()
-        self.assertEqual(pump_run, None)
+        self.assertEqual(pump_run, "Water pump ran for 10 seconds.")
+
+    def test_calculate_container_volume(self):
+        tank_volume = self.arduino_board.calculate_water_tank_volume(20)
+        self.assertEqual(tank_volume, 16.45)
 
 
 if __name__ == "__main__":

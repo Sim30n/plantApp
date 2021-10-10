@@ -35,3 +35,4 @@ build/
 venv/
 __pycache__/
 .env
+log_file.log
