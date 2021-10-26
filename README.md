@@ -51,4 +51,10 @@ Install requirements <br />
 Start plantApp <br />
 `python3 thingsboard_recv.py`
 
+## Add to startup
 
+Edit crontab file 
+`crontab -e`
+
+Add line to the end of file
+`@reboot sleep 240 && /path/to/script`
